@@ -1,7 +1,16 @@
 import { GiDuck } from "react-icons/gi"
 import { Link } from 'react-router-dom'
+import { useState } from "react"
 
 function Navbar() {
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        // TODO: IMPLEMENT SEARCH FUNCTIONALITY
+        console.log("Searching for:", searchQuery);
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container">
@@ -21,6 +30,21 @@ function Navbar() {
                             <Link className="nav-link" to="/products">Products</Link>
                         </li>
                     </ul>
+                    <form className="d-flex mx-auto" onSubmit={handleSearch}>
+                        <div className="input-group">
+                            <input 
+                                type="search" 
+                                className="form-control" 
+                                placeholder="Search products..." 
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                aria-label="Search"
+                            />
+                            <button className="btn btn-outline-success" type="submit">
+                                Search
+                            </button>
+                        </div>
+                    </form>
                     <div className="d-flex">
                     <Link to="/cart" className="btn btn-outline-primary">
                         Cart <span className="badge bg-primary">0</span>
