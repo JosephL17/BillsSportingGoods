@@ -20,6 +20,19 @@ app.get('/', (req, res) => {
     res.send("Hello World")
 });
 
+app.get('/api/all_products', async(req, res) => {
+    try {
+        const client = MongoClient.connect(url);
+        const db = client(dbName);
+        const collection = client(collection);
+        const products = await collection.find({}).array();
+        res.json(products);
+    } catch (err) {
+        console.log("ERROR: ", err);
+        res.status(500).send("ERROR fetching all products!")
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });
