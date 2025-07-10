@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,7 +7,7 @@ dotenv.config();
 const url = process.env.MONGO_DB_URL;
 const dbName = process.env.MONGO_DB;
 const collection = process.env.MONGO_DB_COLLECTION;
-
+const order_collection = process.env.MONGO_DB_ORDERS;
 
 const app = express();
 const port = 3000;
@@ -71,7 +71,7 @@ app.post('/api/orders', async(req, res) => {
         const { products, price, shipping_address } = req.body;
         const client = MongoClient.connect(url);
         const db = client(dbName);
-        const collection = client(collection);
+        const collection = client(order_collection);
         const order = {"category.orders": {
             "products": products,
             "price": price,
