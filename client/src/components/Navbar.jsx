@@ -1,9 +1,12 @@
 import { GiDuck } from "react-icons/gi"
 import { Link } from 'react-router-dom'
 import { useState } from "react"
+import { useCart } from '../contexts/CartContext';
+
 
 function Navbar() {
     const [searchQuery, setSearchQuery] = useState("");
+    const { cartCount } = useCart();
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -47,7 +50,7 @@ function Navbar() {
                     </form>
                     <div className="d-flex">
                     <Link to="/cart" className="btn btn-outline-primary">
-                        Cart <span className="badge bg-primary">0</span>
+                        Cart <span className="badge bg-primary">{cartCount}</span>
                     </Link>
                     </div>
                 </div>
