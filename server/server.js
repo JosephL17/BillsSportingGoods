@@ -69,15 +69,15 @@ app.get('/api/products/:product_id', async(req, res) => {
 app.post('/api/orders', async(req, res) => {
     try {
         const { products, price, shipping_address } = req.body;
-        const client = MongoClient.connect(url);
+        const client = await MongoClient.connect(url);
         const db = client.db(dbName);
         const collection = db.collection(order_collection);
-        const order = {"category.orders": {
+        const order = {
             "products": products,
             "price": price,
             "shipping_address": shipping_address,
-        }};
-        const result = await collection.insert(order);
+        };
+        const result = await collection.insertOne(order);
         res.status(201).send("Order Submited Succesfully!");
     } catch (err) {
         console.log("ERROR: ", err);
