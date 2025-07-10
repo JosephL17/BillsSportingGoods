@@ -1,4 +1,8 @@
+import { useCart } from '../contexts/CartContext';
+import { Link } from 'react-router-dom';
+
 function ProductCard({ product }) {
+    const { addToCart, isInCart, removeFromCart } = useCart();
 
     // PLACEHOLDER DATA UNTIL WE CONNECT TO BACKEND
     const demoProduct = product || {
@@ -6,6 +10,14 @@ function ProductCard({ product }) {
         name: "Sample Product",
         price: 19.99
     }
+
+    const handleAddToCart = () => {
+        addToCart(demoProduct);
+    };
+
+    const handleRemoveFromCart = () => {
+        removeFromCart(demoProduct.id);
+    };
 
     return (
         <div className="card-body d-flex flex-column">
@@ -15,7 +27,7 @@ function ProductCard({ product }) {
                 <button className="btn btn-outline-primary me-2">
                     View Details
                 </button>
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={handleAddToCart}>
                     Add to Cart
                 </button>
             </div>
