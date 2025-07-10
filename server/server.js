@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
     res.send("Hello World")
 });
 
+//  All products endpoint that returns everything
 app.get('/api/all_products', async(req, res) => {
     try {
         const client = MongoClient.connect(url);
@@ -32,6 +33,37 @@ app.get('/api/all_products', async(req, res) => {
         res.status(500).send("ERROR fetching all products!")
     }
 });
+
+// Search endpoint that returns products matching search term
+app.get('/api/products/search/', async(req, res) => {
+    try {
+        const { searchTerm } = req.body;
+        const client = MongoClient.connect(url);
+        const db = client(dbName);
+        const collection = client(collection);
+        const regex = new RegExp(searchTerm, 'i'); // Create a case-insensitive regular expression
+        const products = await collection.find({ "category": regex}).array(); 
+        res.json(products)
+    } catch (err) {
+        console.log("ERROR: ", err)
+        res.status(404).send("ITEM NOT FOUND");
+    }
+});
+
+// Endpoint that returns a single product based on product id
+app.get('/api/products/:product_id', async(req, res) => {
+    try {
+        const { product_id } = req.params;
+        const client = MongoClient.connect(url);
+        const db = client(dbName);
+        const collection = client(collection);
+        const item = await collection.findOne({ "category": product_id});
+        res.send(item)
+    } catch (err) {
+        console.log("ERROR: ITEM NOT FOUND")
+        res.status(404).send("ITEM NOT FOUND")
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
