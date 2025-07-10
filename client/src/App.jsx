@@ -5,6 +5,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import ProductsPage from './pages/ProductsPage'
 import ProductDetailsPage from './pages/ProductDetailsPage'
+import CartPage from './pages/CartPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,6 +19,7 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path='/products/category/:categoryName' element={<ProductsPage />} />
           <Route path="/product/:productId" element={<ProductDetailsPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </div>
     </BrowserRouter>
