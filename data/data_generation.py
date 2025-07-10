@@ -2,6 +2,7 @@
 
 import random
 from faker import Faker
+from pymongo import MongoClient
 
 
 class DuckProductGenerator():
@@ -88,7 +89,7 @@ class DuckProductGenerator():
         category = random.choice(list(self.products.keys()))
         item = random.choice(list(self.products[category]))
         full_product_name = f"{random.choice(self.adjectives)} {item}"
-        description = f"{self.fake.sentence()} {random.choice(self.descriptors)}"
+        description = f"{self.fake.sentence()}"
         price = round(random.uniform(5.00, 99.99), 2)
         sku = self.fake.unique.ean(length=13)
 
@@ -100,10 +101,30 @@ class DuckProductGenerator():
             "sku" : sku
         }
 
+    def generate_products(self, n):
+        """Method to generate n products. Returns json object of all generated products"""
+        prods = []
+
+        for _ in range(n):
+            prods.append(self.generate_product())
+
+        return prods
 
 
+def upload_products(url, prods):
+    """Function that connects to mongo db though the given url 
+    and uploads the given products as a json object"""
+    client = MongoClient(url)
+    db = client['billssportinggoods']
+    collection = db['products']
+    collection.insert_many(prods)
+    print("Products successfully uploaded")
 
 
 if __name__ == "__main__":
+    # Create the fake products
     product_gen = DuckProductGenerator()
-    print(product_gen.generate_product())
+    products = product_gen.generate_products(1000)
+
+    # Upload to mongo DB
+    upload_products("mongodb://localhost:27017", products)
