@@ -83,7 +83,7 @@ class DuckProductGenerator():
             "engineered for maximum waddle efficiency"
         ]
 
-    def generate_product(self):
+    def generate_product(self, popularity_rank):
         """Method for generating a random product of any category"""
 
         category = random.choice(list(self.products.keys()))
@@ -92,21 +92,30 @@ class DuckProductGenerator():
         description = f"{self.fake.sentence()}"
         price = round(random.uniform(5.00, 99.99), 2)
         sku = self.fake.unique.ean(length=13)
+        durability = random.randint(1, 10)
+        
+
 
         return {
             "product name" : full_product_name,
             "description" : description,
             "category" : category,
             "price" : price,
-            "sku" : sku
+            "sku" : sku,
+            "popularity" : popularity_rank,
+            "durability" : durability
         }
 
     def generate_products(self, n):
-        """Method to generate n products. Returns json object of all generated products"""
+        """Method to generate n products with random popularity rankings. 
+        Returns list of all generated products"""
         prods = []
+        popularity = {i for i in range(n)}
 
         for _ in range(n):
-            prods.append(self.generate_product())
+            rank = random.choice(list(popularity))
+            prods.append(self.generate_product(rank))
+            popularity.remove(rank)
 
         return prods
 
