@@ -6,7 +6,7 @@ import cors from 'cors';
 dotenv.config();
 const url = process.env.MONGO_DB_URL;
 const dbName = process.env.MONGO_DB;
-const collection = process.env.MONGO_DB_COLLECTION;
+const collectionName = process.env.MONGO_DB_COLLECTION;
 const order_collection = process.env.MONGO_DB_ORDERS;
 
 const app = express();
@@ -23,10 +23,10 @@ app.get('/', (req, res) => {
 //  All products endpoint that returns everything
 app.get('/api/all_products', async(req, res) => {
     try {
-        const client = MongoClient.connect(url);
-        const db = client(dbName);
-        const collection = client(collection);
-        const products = await collection.find({}).array();
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
+        const products = await collection.find({}).toArray();
         res.json(products);
     } catch (err) {
         console.log("ERROR: ", err);
@@ -35,18 +35,18 @@ app.get('/api/all_products', async(req, res) => {
 });
 
 // Search endpoint that returns products matching search term
-app.get('/api/products/search/', async(req, res) => {
+app.post('/api/products/search', async(req, res) => {
     try {
         const { searchTerm } = req.body;
-        const client = MongoClient.connect(url);
-        const db = client(dbName);
-        const collection = client(collection);
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
         const regex = new RegExp(searchTerm, 'i'); // Create a case-insensitive regular expression
-        const products = await collection.find({ "category": regex}).array(); 
+        const products = await collection.find({ "product name": regex}).toArray(); 
         res.json(products)
     } catch (err) {
         console.log("ERROR: ", err)
-        res.status(404).send("ITEM NOT FOUND");
+        res.status(404).send("ITEM NOT FOUND", searchTerm);
     }
 });
 
@@ -54,10 +54,10 @@ app.get('/api/products/search/', async(req, res) => {
 app.get('/api/products/:product_id', async(req, res) => {
     try {
         const { product_id } = req.params;
-        const client = MongoClient.connect(url);
-        const db = client(dbName);
-        const collection = client(collection);
-        const item = await collection.findOne({ "category": product_id});
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
+        const item = await collection.findOne({ "sku": product_id});
         res.send(item)
     } catch (err) {
         console.log("ERROR: ITEM NOT FOUND")
@@ -70,8 +70,8 @@ app.post('/api/orders', async(req, res) => {
     try {
         const { products, price, shipping_address } = req.body;
         const client = MongoClient.connect(url);
-        const db = client(dbName);
-        const collection = client(order_collection);
+        const db = client.db(dbName);
+        const collection = db.collection(order_collection);
         const order = {"category.orders": {
             "products": products,
             "price": price,
