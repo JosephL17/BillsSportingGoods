@@ -90,7 +90,7 @@ class DuckProductGenerator():
         full_product_name = f"{random.choice(self.adjectives)} {item}"
         description = f"{self.fake.sentence()} {random.choice(self.descriptors)}"
         price = round(random.uniform(5.00, 99.99), 2)
-        sku = self.fake.unique.ean(lenght=13)
+        sku = self.fake.unique.ean(length=13)
 
         return {
             "product name" : full_product_name,
@@ -104,10 +104,6 @@ class DuckProductGenerator():
 
 
 
-
-
-
-
-
 if __name__ == "__main__":
-    pass
+    product_gen = DuckProductGenerator()
+    print(product_gen.generate_product())
