@@ -8,8 +8,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import hstack, csr_matrix
 import joblib
 import numpy as np
+
 app = Flask(__name__)
 CORS(app)
+
+# Load the model from disk
+with open("model.pkl", 'rb') as file:
+    model = pickle.load(file)
+
 
 # Load the vectorizer from disk
 with open('vectorizer.pkl', 'rb') as file:
