@@ -34,12 +34,12 @@ function CartPage() {
                     </thead>
                     <tbody>
                         {cartItems.map(item => (
-                            <tr key={item.id}>
+                            <tr key={item._id}>
                                 <td>
                                     <div className='d-flex align-items-center'>
                                         <div>
                                             <Link to={`/product/${item.id}`} className='text-decoration-none'>
-                                                {item.name}
+                                                {item["product name"]}
                                             </Link>
                                         </div>
                                     </div>

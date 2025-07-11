@@ -1,17 +1,16 @@
+import React, { useState, useEffect } from 'react';
 import ProductCard from "../components/ProductCard";
 import CategoryCard from "../components/CategoryCard";
 import { GiDuck, GiWaterSplash, GiFeather, GiTShirt, GiSoccerBall, GiMedicines, GiMuscleUp } from "react-icons/gi";
 import { Link } from 'react-router-dom';
 
 function HomePage() {
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Dummy data for featured products cards
-    const featuredProducts = [
-        { id: 1, name: "Product 1", price: 19.99 },
-        { id: 2, name: "Product 2", price: 9.99 },
-        { id: 3, name: "Product 3", price: 39.99 },
-        { id: 4, name: "Product 4", price: 15.99 }
-    ]
+    
 
     // Category data
     const categories = [
@@ -22,6 +21,46 @@ function HomePage() {
         { id: 5, name: "Duck Nutrition and Recovery", icon: <GiMedicines size={48} />, color: "#9C27B0" },
         { id: 6, name: "Performance Enhancers", icon: <GiMuscleUp size={48} />, color: "#795548" },
     ]
+
+    useEffect(() => {
+        const fetchRandomProducts = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const response = await fetch('http://localhost:3000/api/all_products');
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                const randomProducts = getRandomProducts(data, 4);
+                
+                setFeaturedProducts(randomProducts);
+            } catch (e) {
+                console.error('Error fetching products:', e);
+                setError('Failed to load featured products.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchRandomProducts();
+    }, []);
+
+    const getRandomProducts = (products, count) => {
+        const shuffled = [...products];
+        
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        return shuffled.slice(0, count);
+    };
+
 
     return (
         <div className="container py-5">
@@ -34,11 +73,21 @@ function HomePage() {
             <section className="mb-5">
                 <h2 className="mb-4">Featured Products</h2>
                 <div className="row">
-                    {featuredProducts.map(product => (
-                        <div key={product.id} className="col-md-3 mb-4">
-                            <ProductCard product={product} />
+                    {loading ? (
+                        <div className="col-12 text-center">
+                            <p>Loading featured products...</p>
                         </div>
-                    ))}
+                    ) : error ? (
+                        <div className="col-12 text-center">
+                            <p className="text-danger">{error}</p>
+                        </div>
+                    ) : (
+                        featuredProducts.map(product => (
+                            <div key={product.id || product._id} className="col-md-3 mb-4">
+                                <ProductCard product={product} />
+                            </div>
+                        ))
+                    )}
                 </div>
             </section>
             <section className="mb-5">
