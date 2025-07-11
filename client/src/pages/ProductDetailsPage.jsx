@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from '../contexts/CartContext';
+import ProductRecommendations from "../components/ProductRecommendations";
 
 function ProductDetailsPage() {
     const [product, setProduct] = useState(null);
@@ -63,6 +64,7 @@ function ProductDetailsPage() {
                     </button>
                 </div>
             </div>
+            <ProductRecommendations product={product} />
         </div>
     );
 }

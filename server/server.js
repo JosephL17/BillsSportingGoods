@@ -14,6 +14,7 @@ const port = 3000;
 app.use(cors()); // Enable CORS for all routes
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
@@ -89,6 +90,8 @@ app.post('/api/orders', async(req, res) => {
 app.post('/api/predict', async(req, res) => {
     try {
         const { data } = req.body;
+
+        console.log(data);
         const flaskResponse = await fetch(process.env.MODEL_URL, {
           method: 'POST',
           headers: {
@@ -97,7 +100,7 @@ app.post('/api/predict', async(req, res) => {
           body: JSON.stringify({ input_data: data }),
         });
         const flaskResult = await flaskResponse.json();
-        res.send({ prediction : flaskResponse.prediction });
+        res.send({ prediction : flaskResult.prediction });
     } catch (err) {
         console.log('ERROR: ', err)
         res.status(500).send("INTERNAL SERVER ERROR")
