@@ -1,13 +1,15 @@
 import express from "express";
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import bcrypt from 'bcryptjs'
 
 dotenv.config();
 const url = process.env.MONGO_DB_URL;
 const dbName = process.env.MONGO_DB;
 const collectionName = process.env.MONGO_DB_COLLECTION;
 const order_collection = process.env.MONGO_DB_ORDERS;
+const user_collection = process.env.MONGO_DB_USER;
 
 const app = express();
 const port = 3000;
@@ -20,6 +22,41 @@ app.get('/', (req, res) => {
     res.send("Hello World")
 });
 
+// Endpoint for users to register
+app.post('/api/register', async(req, res) => {
+    try {
+        const salt = await bcrypt.genSalt(10); // Generate a salt with 10 rounds
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        const newUser = {
+            "email" : req.body.email,
+            "password": hashedPassword
+        };
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const collection = db.collection(user_collection);
+        await collection.insertOne(newUser);
+        res.status(201).json({ message: "Successfully Registered!" });
+    } catch (err) {
+        console.log('ERROR: ', err);
+        res.status(400).send("FAILED SIGN UP");
+    };
+});
+
+// Endpoint for users to login
+app.post('/api/login', async(req, res) => {
+    try {
+        const { email, password } = req.body;
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+        const collection = db.collection(user_collection);
+        const user = await collection.findOne({ "email" : email });
+        const isMatch = await bcrypt.compare(password, user.password);
+        isMatch ? res.status(200).send("User Logged In!") : res.status(400).send("INVALID CREDENTIALS")
+    } catch (err) {
+        console.log("ERROR: ", err);
+        res.status(400).send("Failed To Login")
+    }
+})
 //  All products endpoint that returns everything
 app.get('/api/all_products', async(req, res) => {
     try {
