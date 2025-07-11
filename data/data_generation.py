@@ -1,9 +1,9 @@
 """Modules to Create Fake Data for Duck Themed Sporting goods store"""
 
 import random
+import json
 from faker import Faker
 import ollama
-import json
 
 class DuckProductGenerator():
     """Object for generating fake products"""
@@ -75,7 +75,7 @@ class DuckProductGenerator():
             "Pond-Tested",
             "Durable",
             "Competition-Level"
-        ] 
+        ]
 
     def generate_product(self, popularity_rank):
         """Method for generating a random product of any category"""
@@ -88,15 +88,16 @@ class DuckProductGenerator():
         response = ollama.chat(
         model='mistral',
         messages=[
-            {'role': 'user', 'content': f"Give me a description for a product made for ducks called {full_product_name}. Make it no more than 3 sentences long"}
+            {'role': 'user', 
+            'content': (f"Give me a description for a product made for ducks called {full_product_name}. Make it no more than 3 sentences long")}
         ]
-        )   
+        )
 
-        description = response['message']['content'] 
+        description = response['message']['content']
         price = round(random.uniform(5.00, 99.99), 2)
         sku = self.fake.unique.ean(length=13)
         durability = random.randint(1, 10)
-        
+
         return {
             "product name" : full_product_name,
             "description" : description,
@@ -111,7 +112,7 @@ class DuckProductGenerator():
         """Method to generate n products with random popularity rankings. 
         Dumps product info into a file called products.json"""
         prods = []
-        popularity = {i for i in range(n)}
+        popularity = set(range(n))
 
         for _ in range(n):
             rank = random.choice(list(popularity))
@@ -127,4 +128,3 @@ if __name__ == "__main__":
     # Create the fake products
     product_gen = DuckProductGenerator()
     product_gen.generate_products(1000)
-

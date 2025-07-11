@@ -2,6 +2,8 @@
 
 from pymongo import MongoClient
 import json
+from dotenv import load_dotenv
+import os
 
 def upload_products(url, filename):
     """Function that connects to mongo db though the given url 
@@ -12,7 +14,7 @@ def upload_products(url, filename):
         products = json.load(file)
 
     client = MongoClient(url)
-    db = client['billssportinggoods']
+    db = client[os.getenv("MONGO_DB_NAME")]
     collection = db['products']
     result = collection.insert_many(products)
     print("Products successfully uploaded")
@@ -20,4 +22,6 @@ def upload_products(url, filename):
 
 if __name__ == "__main__":
     # Upload the json file to Mongo db 
-    upload_products("mongodb://localhost:27017", "products.json")
+    load_dotenv()
+    mongo_url = os.getenv("MONGO_DB_URL")
+    upload_products(mongo_url, "products.json")
