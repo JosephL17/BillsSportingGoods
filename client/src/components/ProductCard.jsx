@@ -26,17 +26,20 @@ function ProductCard({ product }) {
     };
 
     return (
-        <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{demoProduct["product name"]}</h5>
-            <p className="card=text text-muted">${demoProduct.price.toFixed(2)}</p>
-            <p className="card-text"><small className="text-muted">Category: {demoProduct.category}</small></p>
-            <div className="mt-auto">
-                <button className="btn btn-outline-primary me-2" onClick={handleViewDetails}>
-                    View Details
-                </button>
-                <button className="btn btn-primary" onClick={handleAddToCart}>
-                    Add to Cart
-                </button>
+        <div className='card' style={{ border: '1px solid #dee2e6' }}>
+            <div className="card-body d-flex flex-column">
+                <h5 className="card-title">{demoProduct["product name"]}</h5>
+                <p className="card=text text-muted">${demoProduct.price.toFixed(2)}</p>
+                <p className="card-text"><small className="text-muted">Description: {demoProduct.description}</small></p>
+                <p className="card-text"><small className="text-muted">Category: {demoProduct.category}</small></p>
+                <div className="mt-auto">
+                    <button className="btn btn-outline-primary me-2" onClick={handleViewDetails}>
+                        View Details
+                    </button>
+                    <button className="btn btn-primary" onClick={handleAddToCart}>
+                        Add to Cart
+                    </button>
+                </div>
             </div>
         </div>
     )

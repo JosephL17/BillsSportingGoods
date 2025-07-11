@@ -16,6 +16,7 @@ CORS(app)
 with open("model.pkl", 'rb') as file:
     model = pickle.load(file)
 
+
 # Load the vectorizer from disk
 with open('vectorizer.pkl', 'rb') as file:
     vectorizer = pickle.load(file)

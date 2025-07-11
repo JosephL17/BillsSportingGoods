@@ -16,6 +16,7 @@ const port = 3000;
 app.use(cors()); // Enable CORS for all routes
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
