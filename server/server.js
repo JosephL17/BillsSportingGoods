@@ -85,6 +85,25 @@ app.post('/api/orders', async(req, res) => {
     }
 });
 
+// Endpoint that sends input to ML model and returns prediction
+app.post('/api/predict', async(req, res) => {
+    try {
+        const { data } = req.body;
+        const flaskResponse = await fetch(process.env.MODEL_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ input_data: data }),
+        });
+        const flaskResult = await flaskResponse.json();
+        res.send({ prediction : flaskResponse.prediction });
+    } catch (err) {
+        console.log('ERROR: ', err)
+        res.status(500).send("INTERNAL SERVER ERROR")
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
 });
