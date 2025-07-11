@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
@@ -7,8 +8,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import hstack, csr_matrix
 import joblib
 import numpy as np
-app = Flask(__name__)
 
+app = Flask(__name__)
+CORS(app)
 
 # Load the model from disk
 with open("model.pkl", 'rb') as file:
