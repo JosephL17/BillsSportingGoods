@@ -14,12 +14,12 @@ function ProductRecommendations({ product }) {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:3000/api/predict', {
+      const response = await fetch('http://localhost:5000/api/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data: product }),
+        body: JSON.stringify(product),
       });
       
       if (!response.ok) {
@@ -28,8 +28,8 @@ function ProductRecommendations({ product }) {
       
       const result = await response.json();
       
-      if (result.prediction && Array.isArray(result.prediction)) {
-        setRecommendations(result.prediction);
+      if (result) {
+        setRecommendations(result);
         setShowRecommendations(true);
       } else {
         throw new Error('Invalid response format from prediction service');
@@ -94,7 +94,7 @@ function ProductRecommendations({ product }) {
                       ${(item.price || 0).toFixed(2)}
                     </p>
                     <div className="d-flex justify-content-between small text-muted mb-2">
-                      <span>Popularity: {item.popularity}/10</span>
+                      <span>Popularity: {item.popularity}/1000</span>
                       <span>Durability: {item.durability}/10</span>
                     </div>
                   </div>
