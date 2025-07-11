@@ -122,24 +122,26 @@ app.post('/api/orders', async(req, res) => {
     }
 });
 
+// TODO: PREDICT ENDPOINT BROKEN, CURRENT FIX IS TO BYPASS EXPRESS AND USE FLASK SERVER DIRECTLY
+
 // Endpoint that sends input to ML model and returns prediction
-app.post('/api/predict', async(req, res) => {
-    try {
-        const { data } = req.body;
-        const flaskResponse = await fetch(process.env.MODEL_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ input_data: data }),
-        });
-        const flaskResult = await flaskResponse.json();
-        res.send({ prediction : flaskResponse.prediction });
-    } catch (err) {
-        console.log('ERROR: ', err)
-        res.status(500).send("INTERNAL SERVER ERROR")
-    }
-});
+// app.post('/api/predict', async(req, res) => {
+//     try {
+//         const { data } = req.body;
+//         const flaskResponse = await fetch(process.env.MODEL_URL, {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify({ input_data: data }),
+//         });
+//         const flaskResult = await flaskResponse.json();
+//         res.send({ prediction : flaskResult.prediction });
+//     } catch (err) {
+//         console.log('ERROR: ', err)
+//         res.status(500).send("INTERNAL SERVER ERROR")
+//     }
+// });
 
 app.listen(port, () => {
     console.log(`Server is running on PORT: ${port}`);
