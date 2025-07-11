@@ -33,21 +33,41 @@ function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-        // TODO: IMPLEMENT API CALL TO SAVE ORDER
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      clearCart();
-      alert('Order placed successfully! Thank you for your purchase.');
-      navigate('/');
+        // Prepare the order data
+        const orderData = {
+          products: cartItems,
+          price: cartTotal,
+          shipping_address: {
+            name: formData.name,
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            zip: formData.zip,
+            country: formData.country || 'USA'
+          }
+        };
     
-    } catch (error) {
-      console.error('Error processing order:', error);
-      alert('There was an error processing your order. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+        const response = await fetch('http://localhost:3000/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderData)
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+    
+        clearCart();
+        alert('Order placed successfully! Thank you for your purchase.');
+        navigate('/');
+      } catch (error) {
+        console.error('Error processing order:', error);
+        alert('There was an error processing your order. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
   };
 
   if (cartItems.length === 0) {
@@ -259,9 +279,9 @@ function CheckoutPage() {
             <div className="card-body">
               <ul className="list-group mb-3">
                 {cartItems.map(item => (
-                  <li key={item.id} className="list-group-item d-flex justify-content-between lh-sm">
+                  <li key={item._id} className="list-group-item d-flex justify-content-between lh-sm">
                     <div>
-                      <h6 className="my-0">{item.name}</h6>
+                      <h6 className="my-0">{item["product name"]}</h6>
                     </div>
                     <span className="text-muted">${(item.price).toFixed(2)}</span>
                   </li>

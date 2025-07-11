@@ -22,13 +22,14 @@ function ProductCard({ product }) {
     };
 
     const handleViewDetails = () => {
-        navigate(`/product/${demoProduct.id}`);
+        navigate(`/product/${demoProduct.sku}`);
     };
 
     return (
         <div className="card-body d-flex flex-column">
-            <h5 className="card-title">{demoProduct.name}</h5>
+            <h5 className="card-title">{demoProduct["product name"]}</h5>
             <p className="card=text text-muted">${demoProduct.price.toFixed(2)}</p>
+            <p className="card-text"><small className="text-muted">Category: {demoProduct.category}</small></p>
             <div className="mt-auto">
                 <button className="btn btn-outline-primary me-2" onClick={handleViewDetails}>
                     View Details
