@@ -27,8 +27,6 @@ function CartPage() {
                         <tr>
                             <th scope="col">Product</th>
                             <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
