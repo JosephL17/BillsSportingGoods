@@ -1,9 +1,9 @@
 """Modules to Create Fake Data for Duck Themed Sporting goods store"""
 
 import random
+import json
 from faker import Faker
-from pymongo import MongoClient
-
+import ollama
 
 class DuckProductGenerator():
     """Object for generating fake products"""
@@ -76,12 +76,6 @@ class DuckProductGenerator():
             "Durable",
             "Competition-Level"
         ]
-        self.descriptors = [
-            "Ideal for High-Performance Pond Play",
-            "Used in the Annual Duckathlon",
-            "tested by champion mallards",
-            "engineered for maximum waddle efficiency"
-        ]
 
     def generate_product(self, popularity_rank):
         """Method for generating a random product of any category"""
@@ -89,12 +83,20 @@ class DuckProductGenerator():
         category = random.choice(list(self.products.keys()))
         item = random.choice(list(self.products[category]))
         full_product_name = f"{random.choice(self.adjectives)} {item}"
-        description = f"{self.fake.sentence()}"
+
+        # Querys the mistral model for a simple description about the product
+        response = ollama.chat(
+        model='mistral',
+        messages=[
+            {'role': 'user', 
+            'content': (f"Give me a description for a product made for ducks called {full_product_name}. Make it no more than 3 sentences long")}
+        ]
+        )
+
+        description = response['message']['content']
         price = round(random.uniform(5.00, 99.99), 2)
         sku = self.fake.unique.ean(length=13)
         durability = random.randint(1, 10)
-        
-
 
         return {
             "product name" : full_product_name,
@@ -108,32 +110,21 @@ class DuckProductGenerator():
 
     def generate_products(self, n):
         """Method to generate n products with random popularity rankings. 
-        Returns list of all generated products"""
+        Dumps product info into a file called products.json"""
         prods = []
-        popularity = {i for i in range(n)}
+        popularity = set(range(n))
 
         for _ in range(n):
             rank = random.choice(list(popularity))
             prods.append(self.generate_product(rank))
             popularity.remove(rank)
 
-        return prods
-
-
-def upload_products(url, prods):
-    """Function that connects to mongo db though the given url 
-    and uploads the given products as a json object"""
-    client = MongoClient(url)
-    db = client['billssportinggoods']
-    collection = db['products']
-    collection.insert_many(prods)
-    print("Products successfully uploaded")
+        # Write to a JSON file
+        with open("products.json", "w", encoding="utf-8") as f:
+            json.dump(prods, f, indent=4)
 
 
 if __name__ == "__main__":
     # Create the fake products
     product_gen = DuckProductGenerator()
-    products = product_gen.generate_products(1000)
-
-    # Upload to mongo DB
-    upload_products("mongodb://localhost:27017", products)
+    product_gen.generate_products(1000)
