@@ -16,7 +16,7 @@ function ProductsPage() {
             setLoading(true);
             setError(null);
 
-            const response = await fetch('http://localhost:3000/api/all_products');
+            const response = await fetch('http://localhost:3000/api/products');
 
             console.log('Response status:', response.status);
 
